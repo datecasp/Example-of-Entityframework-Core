@@ -15,7 +15,7 @@ namespace Example_of_Entityframework_Core.Models.DataModels
 
         // 1:N con Usuario
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int UsuarioId { get; set; }
+        public int? UsuarioId { get; set; }
 
         //N:M con Categorías
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

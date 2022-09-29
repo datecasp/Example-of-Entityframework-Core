@@ -9,6 +9,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Models.DataModels;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Example_of_Entityframework_Core.Models.ResultModels;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -41,6 +42,60 @@ namespace Example_of_Entityframework_Core.Controllers
 
             return libros
                 ;
+        }
+
+        // GET: api/LibrosPorCategorias/5
+        // Gets all the books in a Category
+        [HttpGet]
+        [Route("api/CategoriasDeLibro/{LibroId}")]
+        public async Task<ActionResult<CategoriasDeLibro>> GetCategoriasDeLibro(int LibroId)
+        {
+            var categorias = await _context.Categorias.ToListAsync();
+            var libro = await _context.Libros.FindAsync(LibroId);
+            var catlib = await _context.CategoriaLibros.ToListAsync();
+
+            //Avoid circular reference
+            JsonSerializerOptions opt = new()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            var catDeLib = from cl in catlib
+                                    where cl.LibroId == LibroId
+                                    select cl.Categoria;
+
+            CategoriasDeLibro result = new CategoriasDeLibro()
+            {
+                LibroId = libro.LibroId,
+                Titulo = libro.Titulo,
+                Autor = libro.Autor,
+                Categorias = new List<CategoriaBasica>()
+            };
+
+            foreach (Categorias cat in catDeLib)
+            {
+
+                CategoriaBasica newCat = new()
+                {
+                    CategoriaId = cat.CategoriasId,
+                    Categoria = cat.Categoria
+                };
+
+                result.Categorias.Add(newCat);
+
+            }
+
+            // Kill circular references
+            string jsonStr = JsonSerializer.Serialize(result, opt);
+            CategoriasDeLibro? lpc = JsonSerializer.Deserialize<CategoriasDeLibro>(jsonStr, opt);
+
+            return lpc;
         }
 
         // GET: api/Libroes/5
@@ -91,12 +146,19 @@ namespace Example_of_Entityframework_Core.Controllers
         // POST: api/Libroes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Libro>> PostLibro(Libro libro)
+        public async Task<ActionResult<Libro>> PostLibro(CategoriasDeLibro lib)
         {
-            _context.Libros.Add(libro);
+            Libro cl = new Libro()
+            {
+                LibroId = lib.LibroId,
+                Titulo = lib.Titulo,
+                Autor = lib.Autor,
+            };
+
+            _context.Libros.Add(cl);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLibro", new { id = libro.LibroId }, libro);
+            return CreatedAtAction("GetLibro", new { id = cl.LibroId }, cl);
         }
 
         // DELETE: api/Libroes/5

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Models.DataModels;
+using Example_of_Entityframework_Core.Models.ResultModels;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -99,8 +100,15 @@ namespace Example_of_Entityframework_Core.Controllers
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<Usuario>> PostUsuario(UsuarioBasico usu)
         {
+            Usuario usuario = new Usuario()
+            {
+                UsuarioId = usu.UsuarioId,
+                Nombre = usu.Nombre,
+                Libros = new List<Libro>()
+            };
+
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 

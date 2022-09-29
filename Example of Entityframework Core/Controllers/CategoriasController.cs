@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Models.DataModels;
+using Example_of_Entityframework_Core.Models.ResultModels;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -26,6 +29,60 @@ namespace Example_of_Entityframework_Core.Controllers
         public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
         {
             return await _context.Categorias.ToListAsync();
+        }
+
+        // GET: api/LibrosPorCategorias/5
+        // Gets all the books in a Category
+        [HttpGet]
+        [Route("api/LibrosPorCategoria/{categoriaId}")]
+        public async Task<ActionResult<LibrosPorCategoria>> GetLibrosPorCategoria(int categoriaId)
+        {
+            var categoria = await _context.Categorias.FindAsync(categoriaId);
+            var libros = await _context.Libros.ToListAsync();
+            var catlib = await _context.CategoriaLibros.ToListAsync();
+
+            //Avoid circular reference
+            JsonSerializerOptions opt = new()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            var librosEnCategoria = from cl in catlib
+                         where cl.CategoriaId == categoriaId
+                         select cl.Libro;
+
+            LibrosPorCategoria result = new LibrosPorCategoria()
+            {
+                CategoriaId = categoria.CategoriasId,
+                Categoria = categoria.Categoria,
+                Libros = new List<LibroBasico>()
+            };
+
+            foreach (Libro libro in librosEnCategoria)
+            {
+            
+                LibroBasico newLib = new()
+                {
+                    LibroId = libro.LibroId,
+                    Titulo = libro.Titulo,
+                    Autor = libro.Autor
+                };
+
+                result.Libros.Add(newLib);
+                
+            }
+
+            // Kill circular references
+            string jsonStr = JsonSerializer.Serialize(result, opt);
+            LibrosPorCategoria? lpc = JsonSerializer.Deserialize<LibrosPorCategoria>(jsonStr, opt);
+
+            return lpc;
         }
 
         // GET: api/Categorias/5
