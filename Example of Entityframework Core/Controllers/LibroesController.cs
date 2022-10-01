@@ -112,6 +112,45 @@ namespace Example_of_Entityframework_Core.Controllers
             return libro;
         }
 
+        // GET: api/UsuariosDeLibros/5
+        [HttpGet("api/UsuariosDeLibro/{id}")]
+        public async Task<ActionResult<ICollection<UsuarioBasico>>> GetUsuariosDeLibro(int id)
+        {
+            var libro = await _context.Libros.FindAsync(id);
+            var usuarios = await _context.Usuarios.ToListAsync();
+            var antUsuarios = await _context.UsuariosAntiguos.ToListAsync();
+
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
+            var request = from usu in usuarios
+                          where usu.UsuarioId == libro.UsuarioId
+                          select new UsuarioBasico()
+                          {
+                              UsuarioId = usu.UsuarioId,
+                              Nombre = usu.Nombre
+                          };
+
+            var requestAnt = from au in antUsuarios
+                             where au.LibroAntiguoId == id
+                             select new UsuarioBasico()
+                             {
+                                 UsuarioId = au.UsuarioAntiguo.UsuarioId,
+                                 Nombre = au.UsuarioAntiguo.Nombre
+                             };
+            
+
+            foreach(var au in requestAnt)
+            {
+               request = request.Append(au);
+               
+            }
+
+            return request.ToArray();
+        }
+
         // PUT: api/Libroes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("api/ModificarLibro/{id}")]
