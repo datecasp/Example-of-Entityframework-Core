@@ -1,6 +1,14 @@
 ﻿using Example_of_Entityframework_Core.Models.DataModels;
 using System.ComponentModel.DataAnnotations;
 
+/***************************
+*
+*       Helper class to create objects
+*       to manage data (DTO) and how
+*       them are showed in swagger
+*
+****************************/
+
 namespace Example_of_Entityframework_Core.Models.ResultModels
 {
     public class LibrosPorCategoria
