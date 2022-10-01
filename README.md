@@ -25,4 +25,5 @@ Linq for the queries.
 
 # TODO:
 +Add Services for reuse code and slim controllers
+
 +Add autentication
