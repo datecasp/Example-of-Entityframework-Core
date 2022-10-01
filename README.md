@@ -22,3 +22,7 @@ with customized controllers.
 #Database
 The database is managed with SSMS with SQLEXPRESS and using 
 Linq for the queries.
+
+#TODO:
++Add Services for reuse code and slim controllers
++Add autentication
