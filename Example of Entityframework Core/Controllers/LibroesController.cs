@@ -154,7 +154,7 @@ namespace Example_of_Entityframework_Core.Controllers
         // PUT: api/Libroes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("api/ModificarLibro/{id}")]
-        public async Task<IActionResult> PutLibro(int id, LibroBasico lib)
+        public async Task<IActionResult> PutModificarLibro(int id, LibroBasico lib)
         {
             if (id != lib.LibroId)
             {
@@ -168,6 +168,7 @@ namespace Example_of_Entityframework_Core.Controllers
                 Autor = lib.Autor
             };
 
+           
             _context.Entry(libro).State = EntityState.Modified;
 
             try
