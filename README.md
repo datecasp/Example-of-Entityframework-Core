@@ -1,4 +1,4 @@
-# Example-of-Entityframework-Core
+# Example-of-Entityframework-Core (WIP)
 This project shows the use of Entity Framework Core as ORM 
 for the manage of a database.
 It represents the relation betwen users (Usuarios) and books
