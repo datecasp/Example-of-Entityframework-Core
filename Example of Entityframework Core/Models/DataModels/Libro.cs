@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Example_of_Entityframework_Core.Models.ResultModels;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Example_of_Entityframework_Core.Models.DataModels
@@ -16,7 +17,7 @@ namespace Example_of_Entityframework_Core.Models.DataModels
         // 1:N con Usuario
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int? UsuarioId { get; set; }
-
+       
         //N:M con Categorías
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ICollection<CategoriaLibro> CategoriaLibros { get; set; }

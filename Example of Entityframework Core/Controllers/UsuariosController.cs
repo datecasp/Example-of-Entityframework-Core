@@ -66,15 +66,81 @@ namespace Example_of_Entityframework_Core.Controllers
             return result.ToArray();
         }
 
+        // PUT: api/UsuarioDevuelveLibro/
+        [HttpPut("api/UsuarioDevuelveLibro/{UsuarioId}")]
+        public async Task<IActionResult> PutUsuarioDevuelveLibro(int UsuarioId, int LibroId)
+        {
+            var usu = await _context.Usuarios.FindAsync(UsuarioId);
+            var lib = await _context.Libros.FindAsync(LibroId);
+            var usuAnt = await _context.UsuariosAntiguos.ToListAsync();
+
+            if (usu == null || lib == null) return NotFound();
+
+            if (UsuarioId != lib.UsuarioId) return BadRequest();
+
+            lib.UsuarioId = null;
+
+            _context.Entry(lib).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+                       
+            UsuariosAntiguos ua = new UsuariosAntiguos()
+            {
+               
+                LibroAntiguoId = lib.LibroId,
+                UsuarioAntiguo = usu
+                
+            };
+
+            _context.UsuariosAntiguos.Add(ua);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // PUT: api/UsuarioCogeLibro/
+        [HttpPut("api/UsuarioCogeLibro/{UsuarioId}")]
+        public async Task<IActionResult> PutUsuarioCogeLibro(int UsuarioId, int LibroId)
+        {
+            int usuLibId = 0;
+
+            var usu = await _context.Usuarios.FindAsync(UsuarioId);
+            var lib = await _context.Libros.FindAsync(LibroId);
+            var usuAnt = await _context.UsuariosAntiguos.ToListAsync();
+
+            if (usu == null || lib == null) return NotFound();
+
+            if (lib.UsuarioId != null) usuLibId = (int)lib.UsuarioId;
+           
+
+            if(lib.UsuarioId != null) await PutUsuarioDevuelveLibro(usuLibId, LibroId);
+
+            lib.UsuarioId = UsuarioId;
+
+            _context.Entry(lib).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+                       
+            return NoContent();
+        }
+
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        [HttpPut]
+        [Route("api/ModificarUsuario/{UsuarioId}")]
+        public async Task<IActionResult> PutLibro(int UsuarioId, UsuarioBasico usu)
         {
-            if (id != usuario.UsuarioId)
+            if (UsuarioId != usu.UsuarioId)
             {
                 return BadRequest();
             }
+
+            Usuario usuario = new Usuario()
+            {
+                UsuarioId = UsuarioId,
+                Nombre = usu.Nombre
+            };
 
             _context.Entry(usuario).State = EntityState.Modified;
 
@@ -84,7 +150,7 @@ namespace Example_of_Entityframework_Core.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(id))
+                if (!UsuarioExists(UsuarioId))
                 {
                     return NotFound();
                 }

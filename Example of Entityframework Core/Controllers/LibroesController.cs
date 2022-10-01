@@ -114,13 +114,20 @@ namespace Example_of_Entityframework_Core.Controllers
 
         // PUT: api/Libroes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLibro(int id, Libro libro)
+        [HttpPut("api/ModificarLibro/{id}")]
+        public async Task<IActionResult> PutLibro(int id, LibroBasico lib)
         {
-            if (id != libro.LibroId)
+            if (id != lib.LibroId)
             {
                 return BadRequest();
             }
+
+            Libro libro = new Libro()
+            {
+                LibroId = id,
+                Titulo = lib.Titulo,
+                Autor = lib.Autor
+            };
 
             _context.Entry(libro).State = EntityState.Modified;
 
@@ -143,22 +150,34 @@ namespace Example_of_Entityframework_Core.Controllers
             return NoContent();
         }
 
-        // POST: api/Libroes
+        //Añadir Libro a Categoria
+        // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Libro>> PostLibro(CategoriasDeLibro lib)
+        [Route("api/AñadirCategoriaALibro/{CategoriaId}")]
+        public async Task<IActionResult> PutLibroEnCategorias(int LibroId, int CategoriaId)
         {
-            Libro cl = new Libro()
+            var cat = await _context.Categorias.FindAsync(CategoriaId);
+            var lib = await _context.Libros.FindAsync(LibroId);
+            var catLib = await _context.CategoriaLibros.ToListAsync();
+
+            if (cat == null || lib == null) return NotFound();
+
+            CategoriaLibro categoriaLibro = new CategoriaLibro()
             {
-                LibroId = lib.LibroId,
-                Titulo = lib.Titulo,
-                Autor = lib.Autor,
+                CategoriaLibroId = catLib.Count + 1,
+                LibroId = LibroId,
+                CategoriaId = CategoriaId,
+                Libro = lib,
+                Categoria = cat
             };
 
-            _context.Libros.Add(cl);
+            _context.CategoriaLibros.Add(categoriaLibro);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLibro", new { id = cl.LibroId }, cl);
+
+            return NoContent();
         }
 
         // DELETE: api/Libroes/5

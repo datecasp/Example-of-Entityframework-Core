@@ -4,6 +4,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Example_of_Entityframework_Core.Migrations
 {
     [DbContext(typeof(EntityDBContext))]
-    partial class EntityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220930232523_poi")]
+    partial class poi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,6 +250,23 @@ namespace Example_of_Entityframework_Core.Migrations
                     b.ToTable("UsuariosAntiguos");
                 });
 
+            modelBuilder.Entity("Example_of_Entityframework_Core.Models.ResultModels.UsuarioBasico", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsuarioId"), 1L, 1);
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UsuarioId");
+
+                    b.ToTable("UsuarioBasico");
+                });
+
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.CategoriaLibro", b =>
                 {
                     b.HasOne("Example_of_Entityframework_Core.Models.DataModels.Categorias", "Categoria")
@@ -276,7 +295,7 @@ namespace Example_of_Entityframework_Core.Migrations
 
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.UsuariosAntiguos", b =>
                 {
-                    b.HasOne("Example_of_Entityframework_Core.Models.DataModels.Usuario", "UsuarioAntiguo")
+                    b.HasOne("Example_of_Entityframework_Core.Models.ResultModels.UsuarioBasico", "UsuarioAntiguo")
                         .WithMany()
                         .HasForeignKey("UsuarioAntiguoUsuarioId");
 

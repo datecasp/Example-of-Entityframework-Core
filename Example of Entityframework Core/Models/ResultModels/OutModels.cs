@@ -1,4 +1,5 @@
 ﻿using Example_of_Entityframework_Core.Models.DataModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace Example_of_Entityframework_Core.Models.ResultModels
 {
@@ -31,7 +32,8 @@ namespace Example_of_Entityframework_Core.Models.ResultModels
     }
 
     public class UsuarioBasico
-    {
+    { 
+        [Key]
         public int UsuarioId { get; set; }
         public string Nombre { get; set; }
     }

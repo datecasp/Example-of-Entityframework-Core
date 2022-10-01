@@ -4,6 +4,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Example_of_Entityframework_Core.Migrations
 {
     [DbContext(typeof(EntityDBContext))]
-    partial class EntityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220930224332_antiguosUsuarios")]
+    partial class antiguosUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,7 +207,12 @@ namespace Example_of_Entityframework_Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UsuariosAntiguosId")
+                        .HasColumnType("int");
+
                     b.HasKey("UsuarioId");
+
+                    b.HasIndex("UsuariosAntiguosId");
 
                     b.ToTable("Usuarios");
 
@@ -235,15 +242,10 @@ namespace Example_of_Entityframework_Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsuariosAntiguosId"), 1L, 1);
 
-                    b.Property<int?>("LibroAntiguoId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UsuarioAntiguoUsuarioId")
+                    b.Property<int?>("LibroId")
                         .HasColumnType("int");
 
                     b.HasKey("UsuariosAntiguosId");
-
-                    b.HasIndex("UsuarioAntiguoUsuarioId");
 
                     b.ToTable("UsuariosAntiguos");
                 });
@@ -274,13 +276,11 @@ namespace Example_of_Entityframework_Core.Migrations
                         .HasForeignKey("UsuarioId");
                 });
 
-            modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.UsuariosAntiguos", b =>
+            modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.Usuario", b =>
                 {
-                    b.HasOne("Example_of_Entityframework_Core.Models.DataModels.Usuario", "UsuarioAntiguo")
-                        .WithMany()
-                        .HasForeignKey("UsuarioAntiguoUsuarioId");
-
-                    b.Navigation("UsuarioAntiguo");
+                    b.HasOne("Example_of_Entityframework_Core.Models.DataModels.UsuariosAntiguos", null)
+                        .WithMany("ListaUsuariosAntiguos")
+                        .HasForeignKey("UsuariosAntiguosId");
                 });
 
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.Categorias", b =>
@@ -296,6 +296,11 @@ namespace Example_of_Entityframework_Core.Migrations
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.Usuario", b =>
                 {
                     b.Navigation("Libros");
+                });
+
+            modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.UsuariosAntiguos", b =>
+                {
+                    b.Navigation("ListaUsuariosAntiguos");
                 });
 #pragma warning restore 612, 618
         }

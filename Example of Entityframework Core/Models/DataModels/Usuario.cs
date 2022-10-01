@@ -12,5 +12,6 @@ namespace Example_of_Entityframework_Core.Models.DataModels
         public string Nombre { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public ICollection<Libro> Libros { get; set; }
+        
     }
 }

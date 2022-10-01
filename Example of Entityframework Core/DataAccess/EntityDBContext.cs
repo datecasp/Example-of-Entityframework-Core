@@ -11,6 +11,7 @@ namespace Example_of_Entityframework_Core.DataAccess
         public DbSet<Usuario>? Usuarios { get; set; }
         public DbSet<Categorias>? Categorias { get; set; }
         public DbSet<CategoriaLibro>? CategoriaLibros { get; set; }
+        public DbSet<UsuariosAntiguos>? UsuariosAntiguos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,6 +33,7 @@ namespace Example_of_Entityframework_Core.DataAccess
                 .HasOne(cl => cl.Categoria)
                 .WithMany(c => c.CategoriaLibros)
                 .HasForeignKey(cl => cl.CategoriaId);
+
 
             Seed(builder);
         }

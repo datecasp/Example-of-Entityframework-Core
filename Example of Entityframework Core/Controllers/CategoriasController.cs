@@ -99,33 +99,32 @@ namespace Example_of_Entityframework_Core.Controllers
             return categorias;
         }
 
+        //Añadir Libro a Categoria
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategorias(int id, Categorias categorias)
+        [HttpPost]
+        [Route("api/AñadirLibroACategoria/{CategoriaId}")]
+        public async Task<IActionResult> PutLibroEnCategorias(int CategoriaId, int LibroId)
         {
-            if (id != categorias.CategoriasId)
-            {
-                return BadRequest();
-            }
+            var cat = await _context.Categorias.FindAsync(CategoriaId);
+            var lib = await _context.Libros.FindAsync(LibroId);
+            var catLib = await _context.CategoriaLibros.ToListAsync();
 
-            _context.Entry(categorias).State = EntityState.Modified;
+            if (cat == null || lib == null) return NotFound();
 
-            try
+            CategoriaLibro categoriaLibro = new CategoriaLibro()
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoriasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                CategoriaLibroId = catLib.Count+1,
+                LibroId = LibroId,
+                CategoriaId = CategoriaId,
+                Libro = lib,
+                Categoria = cat
+            };        
+
+            _context.CategoriaLibros.Add(categoriaLibro);
+
+            await _context.SaveChangesAsync();
+           
 
             return NoContent();
         }
@@ -133,12 +132,17 @@ namespace Example_of_Entityframework_Core.Controllers
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Categorias>> PostCategorias(Categorias categorias)
+        public async Task<ActionResult<Categorias>> PostCategorias(CategoriaBasica cat)
         {
-            _context.Categorias.Add(categorias);
+            Categorias categoria = new()
+            {
+                CategoriasId = cat.CategoriaId,
+                Categoria = cat.Categoria
+            };
+            _context.Categorias.Add(categoria);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategorias", new { id = categorias.CategoriasId }, categorias);
+            return CreatedAtAction("GetCategorias", new { id = categoria.CategoriasId }, categoria);
         }
 
         // DELETE: api/Categorias/5
