@@ -12,17 +12,17 @@ collection of them.
 Categories must have at least one book and can have a collection
 of them.
 
-#Controllers
+# Controllers
 With the controllers you can execute the basic common operations
 like add a user, a book or a category, modify one of them, get 
 different results (like users, users of a bokk, categories of a
 book, assign book to user and so on). All of them are CRUD operations
 with customized controllers.
 
-#Database
+# Database
 The database is managed with SSMS with SQLEXPRESS and using 
 Linq for the queries.
 
-#TODO:
+# TODO:
 +Add Services for reuse code and slim controllers
 +Add autentication
