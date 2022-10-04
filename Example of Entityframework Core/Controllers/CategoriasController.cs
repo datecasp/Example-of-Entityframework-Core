@@ -10,6 +10,7 @@ using Example_of_Entityframework_Core.Models.DataModels;
 using Example_of_Entityframework_Core.Models.ResultModels;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Example_of_Entityframework_Core.Services;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -18,152 +19,65 @@ namespace Example_of_Entityframework_Core.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly EntityDBContext _context;
+        private readonly ICategoriaServices _catService;
 
-        public CategoriasController(EntityDBContext context)
+        public CategoriasController(EntityDBContext context, ICategoriaServices catService)
         {
             _context = context;
+            _catService = catService;
         }
 
         // GET: api/Categorias
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
+        [HttpGet("Todas las Categorías")]
+        public async Task<IEnumerable<Categorias>> GetCategorias()
         {
-            return await _context.Categorias.ToListAsync();
+            return await _catService.GetCategoriasService();
         }
 
         // GET: api/LibrosPorCategorias/5
         // Gets all the books in a Category
-        [HttpGet]
-        [Route("api/LibrosPorCategoria/{categoriaId}")]
+        [HttpGet("Libros Por Categoria/{categoriaId}")]
         public async Task<ActionResult<LibrosPorCategoria>> GetLibrosPorCategoria(int categoriaId)
         {
-            var categoria = await _context.Categorias.FindAsync(categoriaId);
-            var libros = await _context.Libros.ToListAsync();
-            var catlib = await _context.CategoriaLibros.ToListAsync();
-
-            //Avoid circular reference
-            JsonSerializerOptions opt = new()
-            {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };
-
-            if (categoria == null)
-            {
-                return NotFound();
-            }
-
-            var librosEnCategoria = from cl in catlib
-                         where cl.CategoriaId == categoriaId
-                         select cl.Libro;
-
-            LibrosPorCategoria result = new LibrosPorCategoria()
-            {
-                CategoriaId = categoria.CategoriasId,
-                Categoria = categoria.Categoria,
-                Libros = new List<LibroBasico>()
-            };
-
-            foreach (Libro libro in librosEnCategoria)
-            {
-            
-                LibroBasico newLib = new()
-                {
-                    LibroId = libro.LibroId,
-                    Titulo = libro.Titulo,
-                    Autor = libro.Autor
-                };
-
-                result.Libros.Add(newLib);
-                
-            }
-
-            // Kill circular references
-            string jsonStr = JsonSerializer.Serialize(result, opt);
-            LibrosPorCategoria? lpc = JsonSerializer.Deserialize<LibrosPorCategoria>(jsonStr, opt);
-
-            return lpc;
+            return await _catService.GetLibrosPorCategoriaService(categoriaId);
         }
 
         // GET: api/Categorias/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Categorias>> GetCategorias(int id)
+        [HttpGet("Categoría Por Id/{id}")]
+        public async Task<ActionResult<Categorias>> GetCategoriasPorId(int id)
         {
-            var categorias = await _context.Categorias.FindAsync(id);
+           return await _catService.GetCategoriaPorIdService(id);
+        }
 
-            if (categorias == null)
-            {
-                return NotFound();
-            }
-
-            return categorias;
+        //Modificar Categoria
+        [HttpPut("Modificar Categoría/{id}")]
+        public async Task<IActionResult> PutModificarCategoria(int catId, CategoriaBasica cat)
+        {
+            return await _catService.PutModificarCategoriaService(catId, cat);
         }
 
         //Añadir Libro a Categoria
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Route("api/AñadirLibroACategoria/{CategoriaId}")]
+        [HttpPost("Añadir Libro A Categoria/{CategoriaId}")]
         public async Task<IActionResult> PutLibroEnCategorias(int CategoriaId, int LibroId)
         {
-            var cat = await _context.Categorias.FindAsync(CategoriaId);
-            var lib = await _context.Libros.FindAsync(LibroId);
-            var catLib = await _context.CategoriaLibros.ToListAsync();
-
-            if (cat == null || lib == null) return NotFound();
-
-            CategoriaLibro categoriaLibro = new CategoriaLibro()
-            {
-                CategoriaLibroId = catLib.Count+1,
-                LibroId = LibroId,
-                CategoriaId = CategoriaId,
-                Libro = lib,
-                Categoria = cat
-            };        
-
-            _context.CategoriaLibros.Add(categoriaLibro);
-
-            await _context.SaveChangesAsync();
-           
-
-            return NoContent();
+            return await _catService.PutLibroEnCategoriasService(CategoriaId, LibroId);
         }
 
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Añadir Categoría")]
         public async Task<ActionResult<Categorias>> PostCategorias(CategoriaBasica cat)
         {
-            Categorias categoria = new()
-            {
-                CategoriasId = cat.CategoriaId,
-                Categoria = cat.Categoria
-            };
-            _context.Categorias.Add(categoria);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCategorias", new { id = categoria.CategoriasId }, categoria);
+            return await _catService.PostCategoriasService(cat);
         }
 
         // DELETE: api/Categorias/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Borrar Categoría/{id}")]
         public async Task<IActionResult> DeleteCategorias(int id)
         {
-            var categorias = await _context.Categorias.FindAsync(id);
-            if (categorias == null)
-            {
-                return NotFound();
-            }
-
-            _context.Categorias.Remove(categorias);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CategoriasExists(int id)
-        {
-            return _context.Categorias.Any(e => e.CategoriasId == id);
+            return await _catService.DeleteCategoriasService(id);
         }
     }
 }

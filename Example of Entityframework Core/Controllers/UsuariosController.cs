@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Models.DataModels;
 using Example_of_Entityframework_Core.Models.ResultModels;
+using Example_of_Entityframework_Core.Services;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -16,190 +17,77 @@ namespace Example_of_Entityframework_Core.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly EntityDBContext _context;
+        private readonly IUsuarioServices _userServices;
 
-        public UsuariosController(EntityDBContext context)
+        public UsuariosController(EntityDBContext context, IUsuarioServices usuServices)
         {
             _context = context;
+            _userServices = usuServices;
         }
 
         // GET: api/Usuarios
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        [HttpGet("Todos Los Usuarios")]
+        public async Task<IEnumerable<Usuario>> GetUsuarios()
         {
             var usuarios = await _context.Usuarios.ToListAsync();
-           
-            return usuarios;
+
+            return await _userServices.GetUsersService();
         }
 
         // GET: api/Usuarios/5
-        [HttpGet("{id}")]
+        [HttpGet("Usuario Por Id/{id}")]
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return usuario;
+            return await _userServices.GetUsuarioPorIdService(id);
         }
 
         // GET: api/LibrosDeUsuario/5
         //  Get the books of a user
         [HttpGet]
-        [Route("api/LibrosDeUsuario/{UsuarioId}")]
+        [Route("Libros De Usuario/{UsuarioId}")]
         public async Task<ActionResult<IEnumerable<Libro>>> GetLibrosDeUsuario(int UsuarioId)
         {
-            var usuario = await _context.Usuarios.FindAsync(UsuarioId);
-            var libros = await _context.Libros.ToListAsync();
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            var result = from lib in libros
-                         where lib.UsuarioId == UsuarioId
-                         select lib;
-
-            return result.ToArray();
+            return await _userServices.GetLibrosDeUsuarioService(UsuarioId);
         }
 
         // PUT: api/UsuarioDevuelveLibro/
-        [HttpPut("api/UsuarioDevuelveLibro/{UsuarioId}")]
+        [HttpPut("Usuario Devuelve Libro/{UsuarioId}")]
         public async Task<IActionResult> PutUsuarioDevuelveLibro(int UsuarioId, int LibroId)
         {
-            var usu = await _context.Usuarios.FindAsync(UsuarioId);
-            var lib = await _context.Libros.FindAsync(LibroId);
-            var usuAnt = await _context.UsuariosAntiguos.ToListAsync();
-
-            if (usu == null || lib == null) return NotFound();
-
-            if (UsuarioId != lib.UsuarioId) return BadRequest();
-
-            lib.UsuarioId = null;
-
-            _context.Entry(lib).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-                       
-            UsuariosAntiguos ua = new UsuariosAntiguos()
-            {
-               
-                LibroAntiguoId = lib.LibroId,
-                UsuarioAntiguo = usu
-                
-            };
-
-            _context.UsuariosAntiguos.Add(ua);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return await _userServices.PutUsuarioDevuelveLibroService(UsuarioId, LibroId);
         }
 
         // PUT: api/UsuarioCogeLibro/
-        [HttpPut("api/UsuarioCogeLibro/{UsuarioId}")]
+        [HttpPut("Usuario Coge Libro/{UsuarioId}")]
         public async Task<IActionResult> PutUsuarioCogeLibro(int UsuarioId, int LibroId)
         {
-            int usuLibId = 0;
-
-            var usu = await _context.Usuarios.FindAsync(UsuarioId);
-            var lib = await _context.Libros.FindAsync(LibroId);
-            var usuAnt = await _context.UsuariosAntiguos.ToListAsync();
-
-            if (usu == null || lib == null) return NotFound();
-
-            if (lib.UsuarioId != null) usuLibId = (int)lib.UsuarioId;
-           
-
-            if(lib.UsuarioId != null) await PutUsuarioDevuelveLibro(usuLibId, LibroId);
-
-            lib.UsuarioId = UsuarioId;
-
-            _context.Entry(lib).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-                       
-            return NoContent();
+            return await _userServices.PutUsuarioCogeLibroService(UsuarioId, LibroId);
         }
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        [Route("api/ModificarUsuario/{UsuarioId}")]
-        public async Task<IActionResult> PutLibro(int UsuarioId, UsuarioBasico usu)
+        [Route("Modificar Usuario/{UsuarioId}")]
+        public async Task<IActionResult> PutModificarUsuario(int UsuarioId, UsuarioBasico usu)
         {
-            if (UsuarioId != usu.UsuarioId)
-            {
-                return BadRequest();
-            }
-
-            Usuario usuario = new Usuario()
-            {
-                UsuarioId = UsuarioId,
-                Nombre = usu.Nombre
-            };
-
-            _context.Entry(usuario).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UsuarioExists(UsuarioId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _userServices.PutModificarUsuarioService(UsuarioId, usu);
         }
 
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Añadir Usuario/")]
         public async Task<ActionResult<Usuario>> PostUsuario(UsuarioBasico usu)
         {
-            Usuario usuario = new Usuario()
-            {
-                UsuarioId = usu.UsuarioId,
-                Nombre = usu.Nombre,
-                Libros = new List<Libro>()
-            };
-
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUsuario", new { id = usuario.UsuarioId }, usuario);
+            return await _userServices.PostUsuarioServcice(usu);
         }
 
         // DELETE: api/Usuarios/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Borrar Usuario/{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            _context.Usuarios.Remove(usuario);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+           return await _userServices.DeleteUsuarioService(id);
         }
 
-        private bool UsuarioExists(int id)
-        {
-            return _context.Usuarios.Any(e => e.UsuarioId == id);
-        }
+       
     }
 }
