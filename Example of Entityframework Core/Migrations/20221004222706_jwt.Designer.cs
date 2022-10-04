@@ -4,6 +4,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Example_of_Entityframework_Core.Migrations
 {
     [DbContext(typeof(EntityDBContext))]
-    partial class EntityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221004222706_jwt")]
+    partial class jwt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,24 +154,6 @@ namespace Example_of_Entityframework_Core.Migrations
                     b.HasKey("GrantedUserId");
 
                     b.ToTable("GrantedUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            GrantedUserId = 1,
-                            Email = "gonzalo@prueba.es",
-                            LastName = "de la predera",
-                            Name = "Admin",
-                            Password = "Admin"
-                        },
-                        new
-                        {
-                            GrantedUserId = 2,
-                            Email = "pepe@prueba.es",
-                            LastName = "Lolailo",
-                            Name = "User 1",
-                            Password = "pepe"
-                        });
                 });
 
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.Libro", b =>

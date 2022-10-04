@@ -205,6 +205,7 @@ namespace Example_of_Entityframework_Core.DataAccess
             builder.Entity<Libro>().HasData(tk1, tk2, tk3, tk4, tk5, tk6);
             builder.Entity<Categorias>().HasData(cat1, cat2, cat3, cat4);
             builder.Entity<CategoriaLibro>().HasData(cl1, cl2, cl3, cl4, cl5, cl6, cl7);
+            builder.Entity<GrantedUser>().HasData(gu1, gu2);
         }
 
 
