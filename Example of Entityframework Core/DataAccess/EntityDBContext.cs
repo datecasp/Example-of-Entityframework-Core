@@ -12,6 +12,8 @@ namespace Example_of_Entityframework_Core.DataAccess
         public DbSet<Categorias>? Categorias { get; set; }
         public DbSet<CategoriaLibro>? CategoriaLibros { get; set; }
         public DbSet<UsuariosAntiguos>? UsuariosAntiguos { get; set; }
+        public DbSet<GrantedUser>? GrantedUsers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -20,6 +22,8 @@ namespace Example_of_Entityframework_Core.DataAccess
             builder.Entity<Usuario>();
 
             builder.Entity<Categorias>();
+
+            builder.Entity<GrantedUser>();
 
             builder.Entity<CategoriaLibro>()
                 .HasKey(cl => new {cl.LibroId, cl.CategoriaId});
@@ -177,6 +181,24 @@ namespace Example_of_Entityframework_Core.DataAccess
                 CategoriaLibroId = -7,
                 CategoriaId = -4,
                 LibroId = -3
+            };
+
+            GrantedUser gu1 = new GrantedUser()
+            {
+                GrantedUserId = 1,
+                Email = "gonzalo@prueba.es",
+                Name = "Admin",
+                LastName = "de la predera",
+                Password = "Admin"
+            };
+
+            GrantedUser gu2 = new GrantedUser()
+            {
+                GrantedUserId = 2,
+                Email = "pepe@prueba.es",
+                Name = "User 1",
+                LastName = "Lolailo",
+                Password = "pepe"
             };
 
             builder.Entity<Usuario>().HasData(sp1, sp2, sp3);
