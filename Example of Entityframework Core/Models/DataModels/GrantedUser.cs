@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Example_of_Entityframework_Core.Models.DataModels
 {
+    [Index(nameof(Email), IsUnique = true)]
     public class GrantedUser
     {
         [Key]
@@ -15,6 +17,7 @@ namespace Example_of_Entityframework_Core.Models.DataModels
         [Required, StringLength(100)]
         public string LastName { get; set; } = string.Empty;
 
+        
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
 
