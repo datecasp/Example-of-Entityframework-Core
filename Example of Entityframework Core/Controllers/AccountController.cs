@@ -34,7 +34,7 @@ namespace Example_of_Entityframework_Core.Controllers
                 var Token = new UserTokens();
 
                 var searchUser = (from user in _context.GrantedUsers
-                                  where user.Name == userLogin.UserName && user.Password == userLogin.Password
+                                  where user.Email == userLogin.Email && user.Password == userLogin.Password
                                   select user).FirstOrDefault();
 
 
@@ -57,7 +57,7 @@ namespace Example_of_Entityframework_Core.Controllers
                 }
                 else
                 {
-                    return BadRequest("Wrong Password");
+                    return BadRequest("Wrong Credentials");
                 }
                 return Ok(Token);
 

@@ -186,7 +186,7 @@ namespace Example_of_Entityframework_Core.DataAccess
             GrantedUser gu1 = new GrantedUser()
             {
                 GrantedUserId = 1,
-                Email = "gonzalo@prueba.es",
+                Email = "admin@admin.es",
                 Name = "Admin",
                 LastName = "de la predera",
                 Password = "Admin",
