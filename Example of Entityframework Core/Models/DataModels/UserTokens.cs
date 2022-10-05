@@ -1,4 +1,6 @@
-﻿namespace Example_of_Entityframework_Core.Models.DataModels
+﻿using NuGet.Common;
+
+namespace Example_of_Entityframework_Core.Models.DataModels
 {
     public class UserTokens
     {
@@ -10,6 +12,7 @@
         public string EmailId { get; set; }
         public Guid GuidId { get; set; }
         public DateTime ExpiredTime { get; set; }
+        public Role Role { get; set; }
 
     }
 }

@@ -189,7 +189,8 @@ namespace Example_of_Entityframework_Core.DataAccess
                 Email = "gonzalo@prueba.es",
                 Name = "Admin",
                 LastName = "de la predera",
-                Password = "Admin"
+                Password = "Admin",
+                Role = Role.Admin
             };
 
             GrantedUser gu2 = new GrantedUser()
@@ -198,7 +199,8 @@ namespace Example_of_Entityframework_Core.DataAccess
                 Email = "pepe@prueba.es",
                 Name = "User 1",
                 LastName = "Lolailo",
-                Password = "pepe"
+                Password = "pepe",
+                Role = Role.User
             };
 
             builder.Entity<Usuario>().HasData(sp1, sp2, sp3);

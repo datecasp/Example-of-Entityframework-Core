@@ -19,14 +19,16 @@ namespace Example_of_Entityframework_Core.Helpers
                 new Claim(ClaimTypes.Expiration, DateTime.UtcNow.AddDays(1).ToString("MMM ddd dd yyyy HH:MM:ss tt"))
             };
 
-            if (userAccounts.UserName == "Admin")
+            if (userAccounts.Role == Role.Admin)
             {
                 claims.Add(new Claim(ClaimTypes.Role, "Administrator"));
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+
             }
-            else if (userAccounts.UserName == "User 1")
+            else if (userAccounts.Role == Role.User)
             {
                 claims.Add(new Claim(ClaimTypes.Role, "User"));
-                claims.Add(new Claim("UserOnly", "User 1"));
+                claims.Add(new Claim("UserOnly", "User1"));
             }
             return claims;
 

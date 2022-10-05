@@ -20,5 +20,13 @@ namespace Example_of_Entityframework_Core.Models.DataModels
 
         [Required]
         public string Password { get; set; } = string.Empty;
+
+        public Role Role { get; set; }
+    }
+
+    public enum Role
+    {
+        Admin,
+        User
     }
 }

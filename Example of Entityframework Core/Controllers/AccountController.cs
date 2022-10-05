@@ -1,6 +1,7 @@
 ﻿using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Helpers;
 using Example_of_Entityframework_Core.Models.DataModels;
+using Example_of_Entityframework_Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,14 +16,16 @@ namespace Example_of_Entityframework_Core.Controllers
     {
         private readonly EntityDBContext _context;
         private readonly JwtSettings _jwtSettings;
+        private readonly IUsuarioServices _usuarioServices;
 
-        public AccountController(EntityDBContext context, JwtSettings jwtSettings)
+        public AccountController(EntityDBContext context, JwtSettings jwtSettings, IUsuarioServices usuarioServices)
         {
             _context = context;
             _jwtSettings = jwtSettings;
+            _usuarioServices = usuarioServices;
         }
 
-        [HttpPost]
+        [HttpPost("/Login/")]
         public IActionResult GetToken(UserLogins userLogin)
         {
 
@@ -46,7 +49,8 @@ namespace Example_of_Entityframework_Core.Controllers
                         UserName = searchUser.Name,
                         EmailId = searchUser.Email,
                         Id = searchUser.GrantedUserId,
-                        GuidId = Guid.NewGuid()
+                        GuidId = Guid.NewGuid(),
+                        Role = searchUser.Role
 
                     }, _jwtSettings
                     );
@@ -66,13 +70,6 @@ namespace Example_of_Entityframework_Core.Controllers
 
         }
 
-
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-
-        public IActionResult GetUserList()
-        {
-            return Ok();
-        }
     }
+
 }
