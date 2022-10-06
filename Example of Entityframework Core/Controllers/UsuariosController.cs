@@ -33,8 +33,6 @@ namespace Example_of_Entityframework_Core.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<IEnumerable<Usuario>> GetUsuarios()
         {
-            var usuarios = await _context.Usuarios.ToListAsync();
-
             return await _userServices.GetUsersService();
         }
 

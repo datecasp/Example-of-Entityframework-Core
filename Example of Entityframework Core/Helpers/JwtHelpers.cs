@@ -79,6 +79,7 @@ namespace Example_of_Entityframework_Core.Helpers
                 userToken.UserName = model.UserName;
                 userToken.Id = model.Id;
                 userToken.GuidId = Id;
+                userToken.Role = model.Role;
                 return userToken;
 
             }
