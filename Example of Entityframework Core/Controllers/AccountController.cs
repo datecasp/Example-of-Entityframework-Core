@@ -27,7 +27,7 @@ namespace Example_of_Entityframework_Core.Controllers
             _usuarioServices = usuarioServices;
         }
 
-        [HttpPost("/Login/")]
+        [HttpPost("Login/")]
         public IActionResult GetToken(UserLogins userLogin)
         {
 
