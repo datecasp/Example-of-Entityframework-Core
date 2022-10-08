@@ -37,7 +37,7 @@ namespace Example_of_Entityframework_Core.Controllers
 
                 var searchUser = (from user in _context.GrantedUsers
                                   where user.Email == userLogin.Email && user.Password == userLogin.Password
-                                  select user).First();
+                                  select user).FirstOrDefault();
 
 
 
