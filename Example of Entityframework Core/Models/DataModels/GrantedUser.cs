@@ -26,6 +26,9 @@ namespace Example_of_Entityframework_Core.Models.DataModels
         
         [Required]
         public Role Role { get; set; }
+
+        [Required]
+        public bool isActive { get; set; } = true;
     }
 
     public enum Role

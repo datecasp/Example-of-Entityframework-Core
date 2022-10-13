@@ -19,12 +19,12 @@ namespace Example_of_Entityframework_Core.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LibroesController : ControllerBase
+    public class LibrosController : ControllerBase
     {
         private readonly EntityDBContext _context;
         private readonly ILibroServices _libroServices;
 
-        public LibroesController(EntityDBContext context, ILibroServices libroServices)
+        public LibrosController(EntityDBContext context, ILibroServices libroServices)
         {
             _context = context;
             _libroServices = libroServices;

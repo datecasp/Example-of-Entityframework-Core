@@ -1,6 +1,7 @@
 ﻿using Example_of_Entityframework_Core.DataAccess;
 using Example_of_Entityframework_Core.Helpers;
 using Example_of_Entityframework_Core.Models.DataModels;
+using Example_of_Entityframework_Core.Models.ResultModels;
 using Example_of_Entityframework_Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,80 +20,63 @@ namespace Example_of_Entityframework_Core.Controllers
         private readonly EntityDBContext _context;
         private readonly JwtSettings _jwtSettings;
         private readonly IUsuarioServices _usuarioServices;
+        private readonly IAccountServices _accountServices;
 
-        public AccountController(EntityDBContext context, JwtSettings jwtSettings, IUsuarioServices usuarioServices)
+        public AccountController(EntityDBContext context, JwtSettings jwtSettings, IUsuarioServices usuarioServices, IAccountServices accountServices)
         {
             _context = context;
             _jwtSettings = jwtSettings;
             _usuarioServices = usuarioServices;
+            _accountServices = accountServices;
         }
 
         [HttpPost("Login/")]
-        public IActionResult GetToken(UserLogins userLogin)
+        public async Task<IActionResult> GetToken(UserLogins userLogin)
         {
-
-            try
-            {
-                var Token = new UserTokens();
-
-                var searchUser = (from user in _context.GrantedUsers
-                                  where user.Email == userLogin.Email && user.Password == userLogin.Password
-                                  select user).FirstOrDefault();
-
-
-
-
-
-               if (searchUser != null)
-                {
-                    
-                    Token = JwtHelpers.GenTokenKey(new UserTokens()
-                    {
-                        UserName = searchUser.Name,
-                        EmailId = searchUser.Email,
-                        Id = searchUser.GrantedUserId,
-                        GuidId = Guid.NewGuid(),
-                        Role = searchUser.Role
-
-                    }, _jwtSettings
-                    );
-                   
-                }
-                else
-                {
-                    return BadRequest("Wrong Credentials");
-                }
-                return Ok(Token);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("GetToken Error", ex);
-
-            }
+            return await _accountServices.GetTokenService(userLogin);
+            
 
         }
 
         //Create GrantedUser to interact with DB
         [HttpPost("Solo Admin/Crear UsuarioDB/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
-        public async Task<ActionResult<IEnumerable<GrantedUser>>> CreateGrantedUser(GrantedUser gu)
+        public async Task<ActionResult> PostGrantedUser(GrantedUser gu)
         {
-            GrantedUser usuario = new GrantedUser()
-            {
-                Name = gu.Name,
-                LastName = gu.LastName,
-                Email = gu.Email,
-                Password = gu.Password,
-                Role = gu.Role
-            };
-
-            _context.GrantedUsers.Add(usuario);
-            await _context.SaveChangesAsync();
-
-            return Ok("Usuario creado con éxito");
+            return await _accountServices.PostGrantedUserService(gu);
         }
 
+        //Retrieve GrantedUsers of DB
+        [HttpGet("Solo Admin/Ver UsuariosDB/")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+        public async Task<ActionResult> GetGrantedUsers()
+        {
+            return await _accountServices.GetGrantedUsersService();
+        }
+
+        //Modify GrantedUser of DB
+        [HttpPut("Solo Admin/Modificar UsuarioDB/{GrantedUserId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+        public async Task<IActionResult> PutModificarGrantedUser(int GrantedUserId, GrantedUser gu)
+        {
+            return await _accountServices.PutModificarGrantedUserService(GrantedUserId, gu);
+        }
+
+        //Modify GrantedUser of DB isActive flag to false
+        [HttpPut("Solo Admin/Baja UsuarioDB/{GrantedUserId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+        public async Task<IActionResult> PutBajaGrantedUser(int GrantedUserId)
+        {
+            return await _accountServices.PutBajaGrantedUserService(GrantedUserId);
+        }
+
+        //Modify GrantedUser of DB isActive flag to true
+        [HttpPut("Solo Admin/Alta UsuarioDB/{GrantedUserId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+        public async Task<IActionResult> PutAltaGrantedUser(int GrantedUserId)
+        {
+            return await _accountServices.PutAltaGrantedUserService(GrantedUserId);
+        }
     }
 
 }

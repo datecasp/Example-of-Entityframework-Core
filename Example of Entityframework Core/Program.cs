@@ -26,6 +26,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
 builder.Services.AddScoped<ILibroServices, LibroServices>();   
 builder.Services.AddScoped<ICategoriaServices, CategoriaServices>();
+builder.Services.AddScoped<IAccountServices, AccountServices>();
 
 // Add Authorization
 builder.Services.AddAuthorization(options =>

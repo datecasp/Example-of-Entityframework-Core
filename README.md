@@ -1,33 +1,50 @@
 # Example-of-Entityframework-Core (WIP)
-This project shows the use of Entity Framework Core as ORM 
-for the manage of a database.
 
-It represents the relation betwen users (Usuarios) and books
-(Libros) and betwen these and categories (Categorias)
+Ejemplo de uso de Entity Framework Core para la gestión de una base de datos.
 
-A user can have assigned or not a book and can have a collection
-of books.
+Muestra el uso de características del framework para implementar todo el 
 
-A book only has or not only one user (the actual who has the book)
-and has a collection of past users (AntiguosUsuarios)
-Also a book must have at least one category and can have a 
-collection of them.
+proceso desde el diseño (Code-first) de las diferentes tablas y sus relaciones,
 
-Categories must have at least one book and can have a collection
-of them.
+el uso de LinQ para realizar consultas o la gestión de roles de usuario para 
 
-# Controllers
-With the controllers you can execute the basic common operations
-like add a user, a book or a category, modify one of them, get 
-different results (like users, users of a bokk, categories of a
-book, assign book to user and so on). All of them are CRUD operations
-with customized controllers.
+securizar diferentes operaciones usando un JsonWebToken.
 
-# Database
-The database is managed with SSMS with SQLEXPRESS and using 
-Linq for the queries.
+Desarrollado con C# en VisualStudio2022
 
-# TODO:
-+Add Services for reuse code and slim controllers
+# Estructura:
 
-+Add autentication
+La aplicación muestra cuatro bloques de controladores.
+
+Account -> Ofrece funcionalidad de Login para usuarios con acceso a la BD.
+
+Estos usuarios se denominan "GrantedUser" y pueden tener rol de Administrador
+
+o de Usuario. Si el rol del usuario es "Administrador" además tendrá acceso 
+
+a una serie de herramientas de gestión de usuarios.
+
+Categorias, Libros y Usuarios -> Estos controladores ofrecen funcionalidad 
+
+de gestión sobre los tres elementos que vamos a manejar en la base de datos.
+
+Se crean tablas para estas tres entidades y para sus relaciones, N:M en el 
+
+caso de Libros y Categorias (un libro tiene muchas categorías y una categoría
+
+muchos libros) y 1:N para Libros y Usuarios (un libro sólo lo puede tener un 
+
+usuario que a su vez puede tener varios libros). También se crea una entidad 
+
+AntiguosUsuarios para guardar los usuarios que han tenido y devuelto un libro.
+
+Mantiene una relación N:M con Libros.
+
+Para todos estos controladores existen interfaces y clases de Servicios que 
+
+implmentan la lógica, desacoplando el código y facilitando así su mantenimiento.
+
+La clase OutModels.cs alberga clases DTO de las diferentes entidades para su
+
+uso como resultado a mostrar, limitando y controlando así el contenido expuesto.
+
