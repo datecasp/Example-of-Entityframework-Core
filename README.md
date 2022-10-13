@@ -38,7 +38,9 @@ usuario que a su vez puede tener varios libros). También se crea una entidad
 
 AntiguosUsuarios para guardar los usuarios que han tenido y devuelto un libro.
 
-Mantiene una relación N:M con Libros.
+Mantiene una relación 1:N con Usuarios (cada AntiguoUsuario representa un libro
+
+que ha tenido el Usuario y ha devuelto, un usuario puede tener varios AntiguoUsuario)
 
 Para todos estos controladores existen interfaces y clases de Servicios que 
 
