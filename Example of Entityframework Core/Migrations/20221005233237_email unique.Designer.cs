@@ -4,6 +4,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Example_of_Entityframework_Core.Migrations
 {
     [DbContext(typeof(EntityDBContext))]
-    partial class EntityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221005233237_email unique")]
+    partial class emailunique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,9 +154,6 @@ namespace Example_of_Entityframework_Core.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
                     b.HasKey("GrantedUserId");
 
                     b.HasIndex("Email")
@@ -170,8 +169,7 @@ namespace Example_of_Entityframework_Core.Migrations
                             LastName = "de la predera",
                             Name = "Admin",
                             Password = "Admin",
-                            Role = 0,
-                            isActive = true
+                            Role = 0
                         },
                         new
                         {
@@ -180,8 +178,7 @@ namespace Example_of_Entityframework_Core.Migrations
                             LastName = "Lolailo",
                             Name = "User 1",
                             Password = "pepe",
-                            Role = 1,
-                            isActive = true
+                            Role = 1
                         });
                 });
 

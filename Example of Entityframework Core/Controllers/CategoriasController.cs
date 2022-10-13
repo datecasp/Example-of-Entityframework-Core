@@ -11,6 +11,9 @@ using Example_of_Entityframework_Core.Models.ResultModels;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Example_of_Entityframework_Core.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Example_of_Entityframework_Core.Controllers
 {
@@ -29,6 +32,7 @@ namespace Example_of_Entityframework_Core.Controllers
 
         // GET: api/Categorias
         [HttpGet("Todas las Categorías")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<IEnumerable<Categorias>> GetCategorias()
         {
             return await _catService.GetCategoriasService();
@@ -37,6 +41,7 @@ namespace Example_of_Entityframework_Core.Controllers
         // GET: api/LibrosPorCategorias/5
         // Gets all the books in a Category
         [HttpGet("Libros Por Categoria/{categoriaId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<ActionResult<LibrosPorCategoria>> GetLibrosPorCategoria(int categoriaId)
         {
             return await _catService.GetLibrosPorCategoriaService(categoriaId);
@@ -44,13 +49,15 @@ namespace Example_of_Entityframework_Core.Controllers
 
         // GET: api/Categorias/5
         [HttpGet("Categoría Por Id/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<ActionResult<Categorias>> GetCategoriasPorId(int id)
         {
            return await _catService.GetCategoriaPorIdService(id);
         }
 
         //Modificar Categoria
-        [HttpPut("Modificar Categoría/{id}")]
+        [HttpPut("Solo Admin/Modificar Categoría/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<IActionResult> PutModificarCategoria(int catId, CategoriaBasica cat)
         {
             return await _catService.PutModificarCategoriaService(catId, cat);
@@ -59,7 +66,8 @@ namespace Example_of_Entityframework_Core.Controllers
         //Añadir Libro a Categoria
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("Añadir Libro A Categoria/{CategoriaId}")]
+        [HttpPost("Solo Admin/Añadir Libro A Categoria/{CategoriaId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<IActionResult> PutLibroEnCategorias(int CategoriaId, int LibroId)
         {
             return await _catService.PutLibroEnCategoriasService(CategoriaId, LibroId);
@@ -67,14 +75,16 @@ namespace Example_of_Entityframework_Core.Controllers
 
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("Añadir Categoría")]
+        [HttpPost("Solo Admin/Añadir Categoría")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<Categorias>> PostCategorias(CategoriaBasica cat)
         {
             return await _catService.PostCategoriasService(cat);
         }
 
         // DELETE: api/Categorias/5
-        [HttpDelete("Borrar Categoría/{id}")]
+        [HttpDelete("Solo Admin/Borrar Categoría/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<IActionResult> DeleteCategorias(int id)
         {
             return await _catService.DeleteCategoriasService(id);

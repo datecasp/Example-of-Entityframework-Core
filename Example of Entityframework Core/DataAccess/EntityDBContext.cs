@@ -12,6 +12,8 @@ namespace Example_of_Entityframework_Core.DataAccess
         public DbSet<Categorias>? Categorias { get; set; }
         public DbSet<CategoriaLibro>? CategoriaLibros { get; set; }
         public DbSet<UsuariosAntiguos>? UsuariosAntiguos { get; set; }
+        public DbSet<GrantedUser>? GrantedUsers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -20,6 +22,8 @@ namespace Example_of_Entityframework_Core.DataAccess
             builder.Entity<Usuario>();
 
             builder.Entity<Categorias>();
+
+            builder.Entity<GrantedUser>();
 
             builder.Entity<CategoriaLibro>()
                 .HasKey(cl => new {cl.LibroId, cl.CategoriaId});
@@ -34,6 +38,7 @@ namespace Example_of_Entityframework_Core.DataAccess
                 .WithMany(c => c.CategoriaLibros)
                 .HasForeignKey(cl => cl.CategoriaId);
 
+           
 
             Seed(builder);
         }
@@ -179,10 +184,31 @@ namespace Example_of_Entityframework_Core.DataAccess
                 LibroId = -3
             };
 
+            GrantedUser gu1 = new GrantedUser()
+            {
+                GrantedUserId = 1,
+                Email = "admin@admin.es",
+                Name = "Admin",
+                LastName = "de la predera",
+                Password = "Admin",
+                Role = Role.Admin
+            };
+
+            GrantedUser gu2 = new GrantedUser()
+            {
+                GrantedUserId = 2,
+                Email = "pepe@prueba.es",
+                Name = "User 1",
+                LastName = "Lolailo",
+                Password = "pepe",
+                Role = Role.User
+            };
+
             builder.Entity<Usuario>().HasData(sp1, sp2, sp3);
             builder.Entity<Libro>().HasData(tk1, tk2, tk3, tk4, tk5, tk6);
             builder.Entity<Categorias>().HasData(cat1, cat2, cat3, cat4);
             builder.Entity<CategoriaLibro>().HasData(cl1, cl2, cl3, cl4, cl5, cl6, cl7);
+            builder.Entity<GrantedUser>().HasData(gu1, gu2);
         }
 
 

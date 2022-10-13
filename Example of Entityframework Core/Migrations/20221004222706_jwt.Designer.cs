@@ -4,6 +4,7 @@ using Example_of_Entityframework_Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Example_of_Entityframework_Core.Migrations
 {
     [DbContext(typeof(EntityDBContext))]
-    partial class EntityDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221004222706_jwt")]
+    partial class jwt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,7 +135,7 @@ namespace Example_of_Entityframework_Core.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -149,40 +151,9 @@ namespace Example_of_Entityframework_Core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
                     b.HasKey("GrantedUserId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("GrantedUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            GrantedUserId = 1,
-                            Email = "admin@admin.es",
-                            LastName = "de la predera",
-                            Name = "Admin",
-                            Password = "Admin",
-                            Role = 0,
-                            isActive = true
-                        },
-                        new
-                        {
-                            GrantedUserId = 2,
-                            Email = "pepe@prueba.es",
-                            LastName = "Lolailo",
-                            Name = "User 1",
-                            Password = "pepe",
-                            Role = 1,
-                            isActive = true
-                        });
                 });
 
             modelBuilder.Entity("Example_of_Entityframework_Core.Models.DataModels.Libro", b =>
